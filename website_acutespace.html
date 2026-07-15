@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACUTE — Performance Venue &amp; Art Gallery</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --ink:#14120F;
+    --paper:#F3EEE4;
+    --brick:#D8C48A;
+    --amber:#E8973B;
+    --white: #F3EEE4;
+    --red:#B5402A;
+    --ink-soft:rgba(20,18,15,0.62);
+    --line:rgba(20,18,15,0.14);
+  }
+
+  *{box-sizing:border-box;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+  }
+
+  ::selection{ background:var(--amber); color:var(--ink); }
+
+  a{ color:inherit; }
+
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  h1,h2,h3, .display{
+    font-family:'Big Shoulders Display', sans-serif;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    line-height:0.92;
+    margin:0;
+  }
+
+  /* ---- bulb strip (signature motif) ---- */
+  .bulb-strip{
+    height:14px;
+    width:100%;
+    background-image:radial-gradient(circle, var(--ink) 2.5px, transparent 3px);
+    background-size:22px 14px;
+    background-position:11px center;
+    opacity:0.85;
+  }
+  .bulb-strip.lit{
+    background-image:radial-gradient(circle, var(--paper) 3px, transparent 3.5px);
+    box-shadow:none;
+  }
+  .bulb-strip.on-dark{
+    background-image:radial-gradient(circle, var(--paper) 2.5px, transparent 3px);
+    opacity:0.35;
+  }
+  .bulb-strip.on-dark.lit{
+    background-image:radial-gradient(circle, var(--paper) 3.2px, transparent 3.7px);
+    opacity:1;
+    animation:flicker 3.4s infinite steps(1);
+  }
+  @keyframes flicker{
+    0%,92%,100%{opacity:1;}
+    94%{opacity:0.55;}
+    96%{opacity:1;}
+  }
+
+  /* ---- header / nav ---- */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:var(--paper);
+    border-bottom:1px solid var(--ink);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:12px;
+    cursor:pointer; border:none; background:none; padding:0;
+  }
+  .brand .mark{
+    border:2px solid var(--ink);
+    padding:2px 10px 4px;
+    font-size:1.4rem;
+  }
+  .brand .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.62rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:none;
+  }
+  @media(min-width:640px){ .brand .tag{ display:block; } }
+
+  nav{ display:flex; gap:4px; }
+  .nav-item{
+    font-family:'IBM Plex Mono', monospace;
+    text-transform:uppercase;
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    padding:8px 12px;
+    cursor:pointer;
+    border:1px solid transparent;
+    background:none;
+  }
+  .nav-item:hover{ border-color:var(--line); }
+  .nav-item.active{ border:1px solid var(--ink); background:var(--ink); color:var(--paper); }
+  .nav-item:focus-visible, .brand:focus-visible, button:focus-visible, a:focus-visible{
+    outline:2px solid var(--red); outline-offset:2px;
+  }
+
+  main{ min-height:calc(100vh - 60px); }
+  .page-view{ }
+  .hidden{ display:none; }
+
+  .wrap{ max-width:1040px; margin:0 auto; padding:0 24px; }
+
+  /* ---- HOME ---- */
+  .hero{
+    background:linear-gradient(rgba(20,18,15,0.8), rgba(20,18,15,0.8)), url("assets/acutebuilding.png") center/cover no-repeat;
+    color:var(--paper);
+    padding:70px 24px 0;
+    overflow:hidden;
+    position:relative;
+  }
+  .hero-inner{ max-width:1040px; margin:0 auto; position:relative; z-index:1; }
+  .hero .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:14px;
+  }
+  .hero h1{
+    font-size:clamp(3.2rem, 11vw, 8rem);
+    color:var(--paper);
+  }
+  .hero p.sub{
+    font-size:clamp(1rem,2.4vw,1.25rem);
+    max-width:34ch;
+    color:rgba(243,238,228,0.78);
+    margin:22px 0 34px;
+    font-weight:300;
+  }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; padding-bottom:36px; }
+  .btn{
+    font-family:'IBM Plex Mono', monospace;
+    text-transform:uppercase;
+    font-size:0.72rem;
+    letter-spacing:0.08em;
+    padding:13px 20px;
+    border:1px solid currentColor;
+    cursor:pointer;
+    background:none;
+    text-decoration:none;
+    display:inline-block;
+  }
+  .btn-solid{ background:var(--amber); color:var(--ink); border-color:var(--amber); }
+  .btn-solid:hover{ background:transparent; color:var(--amber); }
+  .btn-ghost{ color:var(--paper); }
+  .btn-ghost:hover{ background:var(--paper); color:var(--ink); }
+  .btn-dark{ color:var(--ink); }
+  .btn-dark:hover{ background:var(--ink); color:var(--paper); }
+
+  .now-next{
+    background:var(--paper);
+    padding:44px 0 60px;
+  }
+  .now-next .label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:18px;
+  }
+  .teaser-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:18px 0; border-top:1px solid var(--line);
+    gap:16px; flex-wrap:wrap;
+  }
+  .teaser-row:last-child{ border-bottom:1px solid var(--line); }
+  .teaser-date{ font-family:'IBM Plex Mono', monospace; font-size:0.85rem; min-width:150px; color:var(--red); }
+  .teaser-title{ font-weight:600; font-size:1.05rem; flex:1; }
+  .teaser-cat{ font-family:'IBM Plex Mono', monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); }
+
+  .mission-strip{
+    padding:60px 0 80px;
+    display:grid; grid-template-columns:1fr 1.4fr; gap:40px;
+  }
+  @media(max-width:700px){ .mission-strip{ grid-template-columns:1fr; } }
+  .mission-strip h2{ font-size:2.2rem; }
+  .mission-strip p{ line-height:1.65; color:#2a271f; }
+  .mission-strip .link-out{ font-family:'IBM Plex Mono', monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+
+  /* ---- ABOUT ---- */
+  .page-header{
+    padding:50px 24px 30px;
+    border-bottom:1px solid var(--ink);
+  }
+  .page-header .kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--red);
+    margin-bottom:10px;
+  }
+  .page-header h1{ font-size:clamp(2.4rem,7vw,4.2rem); }
+  .page-header-title-row{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .page-header-quote{
+    display:flex;
+    justify-content:flex-end;
+  }
+  .page-header-quote h1{ text-align:right; margin:0; }
+
+  .about-grid{
+    display:grid; grid-template-columns:280px 1fr; gap:48px;
+    padding:50px 0 30px;
+  }
+  @media(max-width:760px){ .about-grid{ grid-template-columns:1fr; } }
+
+  .fact-card{
+    border:1px solid var(--ink);
+    padding:22px;
+    background:repeating-linear-gradient(135deg, transparent, transparent 10px, rgba(216,196,138,0.35) 10px, rgba(216,196,138,0.35) 11px);
+  }
+  .fact-card h3{ font-size:1rem; text-transform:uppercase; margin-bottom:14px; letter-spacing:0.04em; }
+  .fact-card dl{ margin:0; font-family:'IBM Plex Mono', monospace; font-size:0.8rem; }
+  .fact-card dt{ color:var(--ink-soft); margin-top:12px; text-transform:uppercase; letter-spacing:0.08em; font-size:0.65rem; }
+  .fact-card dd{ margin:2px 0 0; }
+
+  .about-copy h2.section-title{
+    font-family:'IBM Plex Mono', monospace;
+    text-transform:uppercase;
+    font-weight:500;
+    font-size:0.78rem;
+    letter-spacing:0.12em;
+    border-bottom:2px solid var(--ink);
+    display:inline-block;
+    padding-bottom:6px;
+    margin:0 0 14px;
+  }
+  .about-copy p{ line-height:1.7; color:#2a271f; margin-bottom:30px; max-width:62ch; }
+  .org-list{ list-style:none; padding:0; margin:0 0 30px; font-size:0.95rem; }
+  .org-list li{ padding:10px 0; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:12px; align-items:center; }
+  .org-list li:last-child{ border-bottom:1px solid var(--line); }
+  .team-item-main{ display:flex; align-items:center; gap:12px; }
+  .team-photo{ width:54px; height:54px; object-fit:cover; border:1px solid var(--ink); flex-shrink:0; }
+  .org-role{ font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; color:var(--ink-soft); }
+
+  /* ---- FUNDRAISING ---- */
+  .campaign{
+    padding:46px 0 10px;
+  }
+  .campaign-figures{
+    display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:10px;
+    margin-bottom:12px;
+  }
+  .campaign-figures .raised{ font-family:'Big Shoulders Display'; font-weight:800; font-size:2.6rem; }
+  .campaign-figures .goal{ font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:var(--ink-soft); }
+  .progress-shell{ position:relative; height:14px; margin-bottom:8px; }
+  .progress-shell .bulb-strip{ position:absolute; top:0; left:0; }
+  .progress-fill{ position:absolute; top:0; left:0; height:100%; overflow:hidden; }
+  .progress-note{ font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.06em; }
+
+  .tiers{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+    margin:50px 0 40px;
+    border:1px solid var(--ink);
+  }
+  @media(max-width:820px){ .tiers{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:520px){ .tiers{ grid-template-columns:1fr; } }
+  .tier{
+    padding:26px 20px;
+    border-right:1px solid var(--ink);
+    border-bottom:1px solid var(--ink);
+    position:relative;
+  }
+  .tier:nth-child(2n){ }
+  @media(min-width:521px){ .tier:nth-child(4n){ border-right:none; } }
+  @media(max-width:820px) and (min-width:521px){ .tier:nth-child(2n){ border-right:none; } .tier:nth-child(4n){ border-right:1px solid var(--ink); } }
+  .tier .amt{ font-family:'Big Shoulders Display'; font-weight:800; font-size:2rem; color:var(--red); }
+  .tier h4{ font-family:'IBM Plex Mono', monospace; text-transform:uppercase; font-size:0.72rem; letter-spacing:0.1em; margin:6px 0 14px; }
+  .tier ul{ margin:0; padding-left:16px; font-size:0.85rem; line-height:1.6; color:#2a271f; }
+
+  .ways-to-give{ padding:20px 0 60px; display:grid; grid-template-columns:1fr 1fr; gap:36px; }
+  @media(max-width:700px){ .ways-to-give{ grid-template-columns:1fr; } }
+  .ways-to-give h3{ font-size:1.1rem; text-transform:uppercase; margin-bottom:10px; letter-spacing:0.03em; }
+  .ways-to-give p{ line-height:1.65; color:#2a271f; font-size:0.92rem; }
+
+  /* ---- CALENDAR ---- */
+  .cal-list{ padding:20px 0 70px; }
+  .cal-row{
+    display:grid;
+    grid-template-columns:150px 1fr auto;
+    align-items:center;
+    gap:18px;
+    padding:20px 0;
+    border-top:1px solid var(--line);
+  }
+  .cal-row:last-child{ border-bottom:1px solid var(--line); }
+  @media(max-width:640px){
+    .cal-row{ grid-template-columns:1fr; gap:6px; padding:18px 0; }
+  }
+  .cal-date{ font-family:'IBM Plex Mono', monospace; font-size:0.9rem; }
+  .cal-date .dow{ display:block; font-size:0.65rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.08em; margin-top:2px; }
+  .cal-main .title{ font-weight:600; font-size:1.15rem; margin-bottom:4px; }
+  .cal-main .meta{ font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); }
+  .cal-status{ font-family:'IBM Plex Mono', monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap; }
+  .cal-status.upcoming{ color:var(--red); }
+  .cal-status.upcoming::before{ content:'●'; color:var(--amber); margin-right:6px; }
+  .cal-status.past{ color:var(--ink-soft); }
+
+  .cal-row.is-past{ opacity:0.55; }
+  .cal-row.is-past .title{ font-weight:500; }
+
+  .loading-state, .error-state{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--ink-soft);
+    padding:40px 0;
+  }
+  .error-state{ color:var(--red); }
+
+  /* ---- EVENT DETAIL ---- */
+  .back-link{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:var(--ink-soft);
+    padding:0;
+    margin-bottom:18px;
+    display:inline-block;
+  }
+  .back-link:hover{ color:var(--ink); }
+  .detail-status{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--red);
+    margin-bottom:10px;
+  }
+  .detail-status::before{ content:'●'; color:var(--amber); margin-right:6px; }
+  .detail-status.past{ color:var(--ink-soft); }
+  .detail-status.past::before{ content:''; margin-right:0; }
+  .detail-meta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    margin:14px 0 26px;
+    display:flex; gap:18px; flex-wrap:wrap;
+  }
+  .detail-image{
+    width:100%; max-height:420px; object-fit:cover;
+    border:1px solid var(--ink);
+    margin-bottom:30px;
+    display:block;
+  }
+  .detail-body{ max-width:65ch; line-height:1.75; color:#2a271f; font-size:1rem; margin-bottom:34px; white-space:pre-line; }
+
+  .performer-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:28px;
+    margin:20px 0 40px;
+  }
+  @media(max-width:640px){ .performer-grid{ grid-template-columns:1fr; } }
+  .performer-card{ }
+  .performer-pic{
+    width:100%; aspect-ratio:4/3; object-fit:cover;
+    border:1px solid var(--ink);
+    margin-bottom:12px; display:block;
+  }
+  .performer-name{ font-weight:600; font-size:1rem; margin-bottom:6px; }
+  .performer-bio{ font-size:0.9rem; line-height:1.6; color:#2a271f; }
+
+  /* ---- EXHIBITIONS ---- */
+  .room-section{ padding:44px 0; border-top:1px solid var(--ink); }
+  .room-section:first-of-type{ border-top:none; padding-top:30px; }
+  .room-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--red);
+    margin-bottom:10px;
+  }
+  .room-description{ max-width:65ch; margin:0 0 24px; }
+  .exhibit-title{ font-size:clamp(1.8rem,5vw,3rem); margin-bottom:16px; }
+  .exhibit-desc{ line-height:1.7; color:#2a271f; }
+  .artwork-block{ margin-bottom:36px; max-width:800px; }
+  .artwork-block:last-child{ margin-bottom:0; }
+  .artwork-pic{
+    width:100%; max-height:600px; object-fit:cover;
+    border:1px solid var(--ink);
+    margin-bottom:10px; display:block;
+  }
+  .artwork-caption{ font-size:0.85rem; line-height:1.6; color:var(--ink-soft); }
+
+  footer{
+    border-top:1px solid var(--ink);
+    padding:26px 24px 60px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    color:var(--ink-soft);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    text-transform:uppercase; letter-spacing:0.06em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="brand" onclick="showPage('home', document.getElementById('nav-home'))">
+    <span class="mark display">ACUTE</span>
+    <span class="tag">Performance Venue &amp; Art Gallery</span>
+  </button>
+  <nav>
+    <button class="nav-item active" id="nav-home" onclick="showPage('home', this)">Home</button>
+    <button class="nav-item" id="nav-about" onclick="showPage('about', this)">About</button>
+    <button class="nav-item" id="nav-calendar" onclick="showPage('calendar', this)">Calendar</button>
+    <button class="nav-item" id="nav-exhibitions" onclick="showPage('exhibitions', this)">Exhibitions</button>
+    <button class="nav-item" id="nav-fundraising" onclick="showPage('fundraising', this)">Fundraising</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <div id="home-page" class="page-view">
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="eyebrow">Milwaukee, Wisconsin</div>
+        <h1>Acute Space</h1>
+        <p class="sub">Concerts. Screenings. Readings.<br/>Dance. Workshops. Exhibitions.<br/> <em>Artist-run. Always.</em></p>
+        <div class="hero-ctas">
+          <a class="btn btn-solid" href="javascript:void(0)" onclick="showPage('calendar', document.getElementById('nav-calendar'))">See what's on</a>
+          <a class="btn btn-ghost" href="javascript:void(0)" onclick="showPage('fundraising', document.getElementById('nav-fundraising'))">Support the space</a>
+        </div>
+      </div>
+      <div class="bulb-strip on-dark lit"></div>
+    </section>
+
+    <section class="now-next wrap">
+      <div class="label">Upcoming Events</div>
+      <div id="home-teasers"><div class="loading-state">Loading…</div></div>
+    </section>
+
+    <section class="mission-strip wrap">
+      <h2>A<br>Creative<br>Understanding<br>To<br>Existence</h2>
+      <div>
+        <p>Acute Space is a curated gallery and performance venue focusing on the value of in-person creative experience and exchange between artist and patron. Acute aims for this experience to be as equitable in resources as possible to all involved, and remove as many points of dividing resources from the result of an event as we are able.</p>
+        <a class="link-out" href="javascript:void(0)" onclick="showPage('about', document.getElementById('nav-about'))">More about the space →</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- ABOUT -->
+  <div id="about-page" class="page-view hidden">
+    <div class="page-header">
+      <div class="kicker">About</div>
+      <div class="page-header-title-row">
+        <h1>Acute Space</h1>
+      </div>
+    </div>
+    <div class="wrap about-grid">
+      <div class="fact-card">
+        <h3 class="mono">Visit</h3>
+        <dl>
+          <dt>Address</dt>
+          <dd>1909 S 60th Street, West Allis, WI 53219</dd>
+          <dt>Gallery hours</dt>
+          <dd>Thu–Sun, 12–5pm</dd>
+        </dl>
+      </div>
+      <div class="about-copy">
+        <h2 class="section-title">Mission</h2>
+        <p>Acute Space aims to present a variety of artforms and events in an environment where everyone feels and is welcome.</p>
+
+        <h2 class="section-title">What we do</h2>
+        <p>We host music shows, poetry readings, dance, performance art, and workshops. We also present solo artist exhibitions in the main room and video art exhibitions in the red room along with visiting artists and pop-ups. We will have local artist merchandise for sale in addition to curated selections of music, books, and art.</p>
+
+        <h2 class="section-title">Team</h2>
+        <ul class="org-list">
+          <li>
+            <div class="team-item-main">
+              <img class="team-photo" src="assets/barry nita.jpeg" alt="Barry Paul Clark">
+              <span><strong>Barry Paul Clark</strong></span>
+            </div>
+            <span class="org-role">Co-founder / curator</span>
+          </li>
+          <li>
+            <div class="team-item-main">
+              <img class="team-photo" src="assets/pedro nita.jpeg" alt="Pedro M. Gutierrez">
+              <span><strong>Pedro M. Gutierrez</strong></span>
+            </div>
+            <span class="org-role">Co-founder / curator</span>
+          </li>
+        </ul>
+        <div class="team-caption" style="margin-top:-8px; margin-bottom:24px; font-size: 11px;"><em>* Paintings by Nita Moore *</em></div>
+
+        <h2 class="section-title">Contact</h2>
+        <p>General inquiries: <a href="mailto:acutespacemke@gmail.com">acutespacemke@gmail.com</a></p>
+        <p><strong><em>Join the email list! Please send an email to the address above containing your name and preferred email address.</em></strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FUNDRAISING -->
+  <div id="fundraising-page" class="page-view hidden">
+    <div class="page-header">
+      <div class="kicker">Fundraising</div>
+      <h1>IF THERE AIN'T NO SPACE<br>IT DON'T TAKE PLACE.</h1>
+    </div>
+    <div class="wrap">
+      <section class="campaign">
+        <p style="max-width:62ch; line-height:1.65; color:#2a271f;">We're looking to raise funds to support our startup costs and ongoing operations. This includes: Monthly Rent, Utilities, and Renovation/Tools/Supplies to build out and activate the space. Thank you! </p>
+        <div class="campaign-figures" style="margin-top:30px;">
+          <div><span class="raised">$1000</span> <span class="mono" style="font-size:0.8rem;color:var(--ink-soft);">raised</span></div>
+          <div class="goal">GOAL: $20,000 · 5%</div>
+        </div>
+        <div class="progress-shell">
+          <div class="bulb-strip"></div>
+          <div class="progress-fill" style="width:5%;">
+            <div class="bulb-strip lit"></div>
+          </div>
+        </div>
+        <div class="progress-note">2 donors so far</div>
+      </section>
+
+      <section style="margin:30px 0 20px; padding:28px 24px; border:1px solid var(--ink); background:rgba(216,196,138,0.18);">
+        <h3 style="margin-bottom:10px; font-size:1.1rem; text-transform:uppercase; letter-spacing:0.03em;">Support Our GoFundMe Campaign</h3>
+        <p style="max-width:62ch; line-height:1.65; color:#2a271f; margin:0 0 14px;">If you’d like to contribute directly, you can support Acute Space through our GoFundMe campaign and help keep the doors open for upcoming shows, exhibitions, and artist programming. If not, see below for other ways to support!</p>
+        <a class="btn btn-dark" href="https://www.gofundme.com/" target="_blank" rel="noopener noreferrer">Visit GoFundMe →</a>
+      </section>
+
+      <section class="ways-to-give">
+        <div>
+          <h3>Volunteer</h3>
+          <p>We're always looking for help running the space for events. Please reach out if you're interested!</p>
+        </div>
+        <div>
+          <h3>Donations</h3>
+          <p>This includes music gear, art supplies, books, records, furniture, coffee shop items, etc..! If you're unsure, reach out!</p>
+        </div>
+        <div>
+          <h3>Partnerships</h3>
+          <p>Are you a local business or organization interested in collaborating with Acute Space? Reach out to discuss potential partnership opportunities!</p>
+        </div>
+        <div>
+          <h3>Questions</h3>
+          <p>Write to <a href="mailto:acutespacemke@gmail.com">acutespacemke@gmail.com</a> — a real person reads and answers every message, usually within a couple of days.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div id="calendar-page" class="page-view hidden">
+    <div class="page-header">
+      <div class="kicker">Calendar</div>
+      <h1>Events</h1>
+    </div>
+    <div class="wrap cal-list" id="cal-list">
+      <div class="loading-state">Loading calendar…</div>
+    </div>
+  </div>
+
+  <!-- EVENT DETAIL -->
+  <div id="event-detail-page" class="page-view hidden">
+    <div class="wrap" style="padding-top:40px;">
+      <button class="back-link" onclick="showPage('calendar', document.getElementById('nav-calendar'))">← Back to calendar</button>
+      <div id="event-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- EXHIBITIONS -->
+  <div id="exhibitions-page" class="page-view hidden">
+    <div class="page-header">
+      <div class="kicker">Exhibitions</div>
+      <h1>On view now</h1>
+    </div>
+    <div class="wrap">
+      <section class="room-section">
+        <div class="room-label">Main Room</div>
+        <div class="room-description">
+          <div class="exhibit-desc">The Main Room features rotating solo exhibtions of locally based visual artists.</div>
+        </div>
+        <div id="room-main-content"><div class="loading-state">Loading…</div></div>
+      </section>
+      <section class="room-section">
+        <div class="room-label">Red Room</div>
+        <div class="room-description">
+          <div class="exhibit-desc">The Red Room features rotating video art exhibitions and pop-up guest artists.</div>
+        </div>
+        <div id="room-red-content"><div class="loading-state">Loading…</div></div>
+      </section>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>Acute Space · Performance Venue &amp; Art Gallery · 1909 S 60th St, West Allis, WI</span>
+  <span>acutespacemke@gmail.com</span>
+</footer>
+
+<script>
+  // ---------------------------------------------------------------
+  // GOOGLE SHEETS DATA SOURCE
+  // Publish your sheet: File → Share → Publish to web → select the
+  // calendar tab → CSV. Paste that URL below.
+  //
+  // Expected column order (first row = headers, ignored):
+  //   A: Date          e.g. 8/14/2026  (or anything JS Date can parse)
+  //   B: Title         e.g. Marrow Trio — record release
+  //   C: Time          e.g. 8:00 PM
+  //   D: Performers     comma-separated, e.g. Marrow Trio, Jane Doe
+  //   E: Type          e.g. Performance / Exhibition / Workshop
+  //   F: Description   longer text shown on the event's own page
+  //   G: Price         e.g. $10 / Pay what you can (optional)
+  //   H: Bio 1          bio for the 1st performer listed (optional)
+  //   I: Bio 2          bio for the 2nd performer listed (optional)
+  //   J: Bio 3          bio for the 3rd performer listed (optional)
+  //   K: Bio 4          bio for the 4th performer listed (optional)
+  //   L: Pic 1          photo URL for the 1st performer (optional)
+  //   M: Pic 2          photo URL for the 2nd performer (optional)
+  //   N: Pic 3          photo URL for the 3rd performer (optional)
+  //   O: Pic 4          photo URL for the 4th performer (optional)
+  //
+  // Bio/Pic columns line up positionally with the order performers
+  // are listed in the Performers column — e.g. Bio 1 / Pic 1 belong
+  // to whoever is listed first. Leave any of them blank if unused.
+  // ---------------------------------------------------------------
+  const CALENDAR_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7E_e2XRWUqMxU6I9wo614tlCxh_YEzjtLGrOYKExbJFlu2CSGc4rJCw2EpaZ1Vp9qEf8lP-uzTyRd/pub?output=csv';
+
+  // ---------------------------------------------------------------
+  // EXHIBITIONS DATA SOURCE (separate sheet from the calendar above)
+  // Since Main Room and Red Room each show one exhibition at a time,
+  // this sheet has exactly two data rows — one for each room.
+  // Publish this sheet the same way: File → Share → Publish to web
+  // → select the exhibitions tab → CSV. Paste the URL below.
+  //
+  // Expected column order (first row = headers, ignored):
+  //   A: Room              must be exactly "Main Room" or "Red Room"
+  //   B: Exhibition Title
+  //   C: Exhibition Description
+  //   D: Artwork Pic 1     filename only, e.g. burnice.gif — the file
+  //                        must live in your repo's /assets folder
+  //   E: Artwork Caption 1
+  //   F: Artwork Pic 2     (optional, same filename rule)
+  //   G: Artwork Caption 2 (optional)
+  //   H: Artwork Pic 3     (optional, same filename rule)
+  //   I: Artwork Caption 3 (optional)
+  //   J: Artwork Pic 4     (optional, same filename rule)
+  //   K: Artwork Caption 4 (optional)
+  //
+  // Leave a room's row blank (just the Room name filled in) if that
+  // room is between exhibitions — the page will say so.
+  // ---------------------------------------------------------------
+  const EXHIBITIONS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRfw9_usZQfbe6NKXL_8Dn-ic-mQ6qRgJQMJZowkYQ0Zon1NyiC-sLjfVf5fdyf9URXkbUCX-IteBlV/pub?output=csv';
+
+  let EVENTS = [];
+
+  function parseCSVLine(line){
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for(let i=0;i<line.length;i++){
+      const char = line[i];
+      if(char === '"') inQuotes = !inQuotes;
+      else if(char === ',' && !inQuotes){ result.push(current.trim()); current=''; }
+      else current += char;
+    }
+    result.push(current.trim());
+    return result;
+  }
+
+  function eventDateTime(ev){
+    const combined = `${ev.date} ${ev.time}`.trim();
+    const d = new Date(combined);
+    if(!isNaN(d)) return d;
+    return new Date(ev.date);
+  }
+
+  function eventPerformers(ev){
+    const names = (ev.performersRaw || '').split(',').map(s => s.trim()).filter(Boolean);
+    const bios = [ev.bio1, ev.bio2, ev.bio3, ev.bio4];
+    const pics = [ev.pic1, ev.pic2, ev.pic3, ev.pic4];
+    const count = Math.min(4, Math.max(names.length, bios.filter(Boolean).length, pics.filter(Boolean).length));
+    const performers = [];
+    for(let i=0;i<count;i++){
+      const p = { name: names[i] || '', bio: bios[i] || '', pic: pics[i] || '' };
+      if(p.name || p.bio || p.pic) performers.push(p);
+    }
+    return performers;
+  }
+
+  async function fetchCalendarData(){
+    const calList = document.getElementById('cal-list');
+    const teasers = document.getElementById('home-teasers');
+    if(!CALENDAR_CSV_URL || CALENDAR_CSV_URL.includes('PASTE_YOUR')){
+      const msg = '<div class="error-state">No calendar sheet connected yet — paste your published Google Sheet CSV URL into CALENDAR_CSV_URL in the code.</div>';
+      calList.innerHTML = msg;
+      teasers.innerHTML = msg;
+      return;
+    }
+    try{
+      const bustCacheUrl = CALENDAR_CSV_URL + (CALENDAR_CSV_URL.includes('?') ? '&' : '?') + 'cachebust=' + Date.now();
+      const response = await fetch(bustCacheUrl, { cache: 'no-store' });
+      const data = await response.text();
+      const rows = data.split(/\r?\n/).slice(1);
+      EVENTS = rows.filter(r => r.trim()).map((line, i) => {
+        const cols = parseCSVLine(line);
+        return {
+          id: i,
+          date: cols[0] || '',
+          title: cols[1] || 'Untitled event',
+          time: cols[2] || '',
+          performersRaw: cols[3] || '',
+          type: cols[4] || '',
+          description: cols[5] || '',
+          price: cols[6] || '',
+          bio1: cols[7] || '', bio2: cols[8] || '', bio3: cols[9] || '', bio4: cols[10] || '',
+          pic1: cols[11] || '', pic2: cols[12] || '', pic3: cols[13] || '', pic4: cols[14] || ''
+        };
+      }).filter(ev => ev.date && !isNaN(eventDateTime(ev)));
+      renderCalendar();
+      renderHomeTeasers();
+    }catch(e){
+      console.error('Calendar fetch error:', e);
+      const msg = '<div class="error-state">Couldn\'t load the calendar right now. Please try again shortly.</div>';
+      calList.innerHTML = msg;
+      teasers.innerHTML = msg;
+    }
+  }
+
+  function fmtParts(d){
+    const dow = d.toLocaleDateString('en-US', { weekday:'short' });
+    const md = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    return { dow, md };
+  }
+
+  function renderCalendar(){
+    const now = new Date();
+    const list = document.getElementById('cal-list');
+    if(!EVENTS.length){
+      list.innerHTML = '<div class="loading-state">No events found in the sheet yet.</div>';
+      return;
+    }
+    const sorted = [...EVENTS].sort((a,b) => eventDateTime(b) - eventDateTime(a));
+    list.innerHTML = sorted.map(ev => {
+      const d = eventDateTime(ev);
+      const isPast = d < now;
+      const { dow, md } = fmtParts(d);
+      const performerNames = eventPerformers(ev).map(p => p.name).filter(Boolean).join(', ');
+      return `
+        <a class="cal-row ${isPast ? 'is-past' : ''}" href="javascript:void(0)" onclick="showEventDetail(${ev.id})">
+          <div class="cal-date">${md}<span class="dow">${dow}${ev.time ? ' · ' + ev.time : ''}</span></div>
+          <div class="cal-main">
+            <div class="title">${ev.title}</div>
+            <div class="meta">${[ev.type, performerNames].filter(Boolean).join(' · ')}</div>
+          </div>
+          <div class="cal-status ${isPast ? 'past' : 'upcoming'}">${isPast ? 'Past' : 'Upcoming'}</div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  function renderHomeTeasers(){
+    const now = new Date();
+    const weekEnd = new Date(now);
+    weekEnd.setDate(weekEnd.getDate() + 7);
+    const upcoming = EVENTS
+      .filter(ev => {
+        const d = eventDateTime(ev);
+        return d >= now && d <= weekEnd;
+      })
+      .sort((a,b) => eventDateTime(a) - eventDateTime(b))
+      .slice(0,3);
+    const wrap = document.getElementById('home-teasers');
+    if(!upcoming.length){
+      wrap.innerHTML = '<p class="mono" style="font-size:0.85rem;color:var(--ink-soft);">Nothing on the books in the next week — check back soon.</p>';
+      return;
+    }
+    wrap.innerHTML = upcoming.map(ev => {
+      const { dow, md } = fmtParts(eventDateTime(ev));
+      return `
+        <a href="javascript:void(0)" onclick="showEventDetail(${ev.id})" style="text-decoration:none;color:inherit;display:block;">
+          <div class="teaser-row">
+            <div class="teaser-date">${dow}, ${md}</div>
+            <div class="teaser-title">${ev.title}</div>
+            <div class="teaser-cat">${ev.type}</div>
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  function showEventDetail(id){
+    const ev = EVENTS.find(e => e.id === id);
+    if(!ev) return;
+    const now = new Date();
+    const d = eventDateTime(ev);
+    const isPast = d < now;
+    const { dow, md } = fmtParts(d);
+    const performers = eventPerformers(ev);
+    const content = document.getElementById('event-detail-content');
+    content.innerHTML = `
+      <div class="detail-status ${isPast ? 'past' : ''}">${isPast ? 'Past event' : 'Upcoming'}</div>
+      <h1>${ev.title}</h1>
+      <div class="detail-meta">
+        <span>${dow}, ${md}${ev.time ? ' · ' + ev.time : ''}</span>
+        ${ev.type ? `<span>${ev.type}</span>` : ''}
+        ${ev.price ? `<span>${ev.price}</span>` : ''}
+      </div>
+      <div class="detail-body">${ev.description || 'More details coming soon.'}</div>
+      ${performers.length ? `
+        <h2 class="section-title" style="display:block;width:fit-content;">Performers</h2>
+        <div class="performer-grid">
+          ${performers.map(p => `
+            <div class="performer-card">
+              ${p.pic ? `<img class="performer-pic" src="${p.pic}" alt="${p.name}" onerror="this.remove();">` : ''}
+              ${p.name ? `<div class="performer-name">${p.name}</div>` : ''}
+              ${p.bio ? `<div class="performer-bio">${p.bio}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    `;
+    showPage('event-detail', document.getElementById('nav-calendar'));
+  }
+
+  function showPage(pageId, navEl){
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    if(navEl) navEl.classList.add('active');
+    document.querySelectorAll('.page-view').forEach(el => el.classList.add('hidden'));
+    document.getElementById(pageId + '-page').classList.remove('hidden');
+    window.scrollTo({ top:0, behavior:'instant' in window ? 'instant' : 'auto' });
+  }
+
+  async function fetchExhibitionsData(){
+    const mainEl = document.getElementById('room-main-content');
+    const redEl = document.getElementById('room-red-content');
+    if(!EXHIBITIONS_CSV_URL || EXHIBITIONS_CSV_URL.includes('PASTE_YOUR')){
+      const msg = '<div class="error-state">No exhibitions sheet connected yet — paste your published Google Sheet CSV URL into EXHIBITIONS_CSV_URL in the code.</div>';
+      mainEl.innerHTML = msg;
+      redEl.innerHTML = msg;
+      return;
+    }
+    try{
+      const bustCacheUrl = EXHIBITIONS_CSV_URL + (EXHIBITIONS_CSV_URL.includes('?') ? '&' : '?') + 'cachebust=' + Date.now();
+      const response = await fetch(bustCacheUrl, { cache: 'no-store' });
+      const data = await response.text();
+      const rows = data.split(/\r?\n/).slice(1).filter(r => r.trim());
+      const rooms = {};
+      rows.forEach(line => {
+        const cols = parseCSVLine(line);
+        const roomKey = (cols[0] || '').trim().toLowerCase();
+        rooms[roomKey] = {
+          title: cols[1] || '',
+          description: cols[2] || '',
+          artworks: [
+            { pic: cols[3] || '', caption: cols[4] || '' },
+            { pic: cols[5] || '', caption: cols[6] || '' },
+            { pic: cols[7] || '', caption: cols[8] || '' },
+            { pic: cols[9] || '', caption: cols[10] || '' }
+          ].filter(a => a.pic || a.caption)
+        };
+      });
+      renderRoom(mainEl, rooms['main room']);
+      renderRoom(redEl, rooms['red room']);
+    }catch(e){
+      console.error('Exhibitions fetch error:', e);
+      const msg = '<div class="error-state">Couldn\'t load exhibitions right now. Please try again shortly.</div>';
+      mainEl.innerHTML = msg;
+      redEl.innerHTML = msg;
+    }
+  }
+
+  function renderRoom(el, room){
+    if(!room || !room.title){
+      el.innerHTML = '<p class="mono" style="font-size:0.85rem;color:var(--ink-soft);">Between exhibitions right now — check back soon.</p>';
+      return;
+    }
+    el.innerHTML = `
+      <h2 class="exhibit-title">${room.title}</h2>
+      ${room.artworks.map(a => `
+        <div class="artwork-block">
+          ${a.pic ? `<img class="artwork-pic" src="assets/${a.pic}" alt="${a.caption || room.title}" onerror="this.remove();">` : ''}
+          ${a.caption ? `<div class="artwork-caption">${a.caption}</div>` : ''}
+        </div>
+      `).join('')}
+    `;
+  }
+
+  fetchCalendarData();
+  fetchExhibitionsData();
+</script>
+
+</body>
+</html>
