@@ -445,9 +445,8 @@
   <div id="home-page" class="page-view">
     <section class="hero">
       <div class="hero-inner">
-        <div class="eyebrow">Milwaukee, Wisconsin</div>
         <h1>Acute Space</h1>
-        <p class="sub">Concerts. Screenings. Readings.<br/>Dance. Workshops. Exhibitions.<br/> <em>Artist-run. Always.</em></p>
+        <p class="sub">Concerts. Screenings. Readings.<br/>Performance. Workshops. Exhibitions.<br/> <em>Artist-run. Always.</em> <br> OPENING FALL 2026 <br/></p>
         <div class="hero-ctas">
           <a class="btn btn-solid" href="javascript:void(0)" onclick="showPage('calendar', document.getElementById('nav-calendar'))">See what's on</a>
           <a class="btn btn-ghost" href="javascript:void(0)" onclick="showPage('fundraising', document.getElementById('nav-fundraising'))">Support the space</a>
@@ -485,12 +484,12 @@
           <dt>Address</dt>
           <dd>1909 S 60th Street, West Allis, WI 53219</dd>
           <dt>Gallery hours</dt>
-          <dd>Thu–Sun, 12–5pm</dd>
+          <dd>Coming Soon</dd>
         </dl>
       </div>
       <div class="about-copy">
         <h2 class="section-title">Mission</h2>
-        <p>Acute Space aims to present a variety of artforms and events in an environment where everyone feels and is welcome.</p>
+        <p>Acute Space aims to present a variety of artforms and events in an environment where everyone is welcome.</p>
 
         <h2 class="section-title">What we do</h2>
         <p>We host music shows, poetry readings, dance, performance art, and workshops. We also present solo artist exhibitions in the main room and video art exhibitions in the red room along with visiting artists and pop-ups. We will have local artist merchandise for sale in addition to curated selections of music, books, and art.</p>
@@ -516,7 +515,7 @@
 
         <h2 class="section-title">Contact</h2>
         <p>General inquiries: <a href="mailto:acutespacemke@gmail.com">acutespacemke@gmail.com</a></p>
-        <p><strong><em>Join the email list! Please send an email to the address above containing your name and preferred email address.</em></strong></p>
+        <p><strong>Join the email list!</strong> <a href="https://docs.google.com/forms/d/18gkSE1ppFTWAeHO6lZIHFvs1exZqwSo3FS6OBdvkBYE/edit" target="_blank" rel="noopener noreferrer">https://docs.google.com/forms/d/18gkSE1ppFTWAeHO6lZIHFvs1exZqwSo3FS6OBdvkBYE/edit</a></p>
       </div>
     </div>
   </div>
@@ -529,10 +528,10 @@
     </div>
     <div class="wrap">
       <section class="campaign">
-        <p style="max-width:62ch; line-height:1.65; color:#2a271f;">We're looking to raise funds to support our startup costs and ongoing operations. This includes: Monthly Rent, Utilities, and Renovation/Tools/Supplies to build out and activate the space. Thank you! </p>
+        <p style="max-width:62ch; line-height:1.65; color:#2a271f;">We're looking to raise funds to support our startup costs and ongoing operations. This includes: Monthly Rent, Utilities, and Renovation/Tools/Supplies to build out and activate the space. Thank you for considering! </p>
         <div class="campaign-figures" style="margin-top:30px;">
-          <div><span class="raised">$1000</span> <span class="mono" style="font-size:0.8rem;color:var(--ink-soft);">raised</span></div>
-          <div class="goal">GOAL: $20,000 · 5%</div>
+          <div><span class="raised">$1500</span> <span class="mono" style="font-size:0.8rem;color:var(--ink-soft);">raised</span></div>
+          <div class="goal">GOAL: $20,000 · 7.5%</div>
         </div>
         <div class="progress-shell">
           <div class="bulb-strip"></div>
@@ -540,13 +539,13 @@
             <div class="bulb-strip lit"></div>
           </div>
         </div>
-        <div class="progress-note">2 donors so far</div>
+        <div class="progress-note">17 donors so far</div>
       </section>
 
       <section style="margin:30px 0 20px; padding:28px 24px; border:1px solid var(--ink); background:rgba(216,196,138,0.18);">
         <h3 style="margin-bottom:10px; font-size:1.1rem; text-transform:uppercase; letter-spacing:0.03em;">Support Our GoFundMe Campaign</h3>
         <p style="max-width:62ch; line-height:1.65; color:#2a271f; margin:0 0 14px;">If you’d like to contribute directly, you can support Acute Space through our GoFundMe campaign and help keep the doors open for upcoming shows, exhibitions, and artist programming. If not, see below for other ways to support!</p>
-        <a class="btn btn-dark" href="https://www.gofundme.com/" target="_blank" rel="noopener noreferrer">Visit GoFundMe →</a>
+        <a class="btn btn-dark" href="https://www.gofundme.com/f/help-launch-acute-space-a-venue-for-art-and-performance" target="_blank" rel="noopener noreferrer">Visit GoFundMe →</a>
       </section>
 
       <section class="ways-to-give">
@@ -760,7 +759,7 @@
     const now = new Date();
     const list = document.getElementById('cal-list');
     if(!EVENTS.length){
-      list.innerHTML = '<div class="loading-state">No events found in the sheet yet.</div>';
+      list.innerHTML = '<div class="loading-state">Check back soon for events.</div>';
       return;
     }
     const sorted = [...EVENTS].sort((a,b) => eventDateTime(b) - eventDateTime(a));
