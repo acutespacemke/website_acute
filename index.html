@@ -421,6 +421,42 @@
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
     text-transform:uppercase; letter-spacing:0.06em;
   }
+
+    /* ---- MOBILE TWEAKS ---- */
+  html{ -webkit-text-size-adjust:100%; }
+  body{ overflow-x:hidden; overflow-wrap:break-word; }
+  img{ max-width:100%; }
+
+  @media (max-width:640px){
+    /* header: logo on top, nav swipes sideways instead of overflowing */
+    header{ flex-direction:column; align-items:stretch; gap:8px; padding:10px 14px; }
+    .brand{ align-self:flex-start; }
+    .brand .mark{ font-size:1.2rem; }
+    nav{ overflow-x:auto; margin:0 -14px; padding:0 14px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+    nav::-webkit-scrollbar{ display:none; }
+    .nav-item{ flex:0 0 auto; padding:11px 12px; }
+
+    main{ min-height:auto; }
+    .wrap{ padding:0 18px; }
+
+    /* home */
+    .hero{ padding:44px 18px 0; }
+    .hero-ctas .btn{ flex:1 1 100%; text-align:center; padding:15px 20px; }
+    .teaser-row{ gap:4px; }
+    .teaser-date{ min-width:0; width:100%; }
+    .mission-strip{ padding:40px 0 56px; gap:24px; }
+    .mission-strip h2{ font-size:1.8rem; }
+
+    /* inner pages */
+    .page-header{ padding:32px 18px 22px; }
+    .about-grid{ gap:32px; padding:32px 0 20px; }
+    .org-list li{ flex-direction:column; align-items:flex-start; gap:6px; }
+    .campaign-figures .raised{ font-size:2.2rem; }
+    .detail-image, .artwork-pic{ max-height:none; }
+
+    footer{ padding:22px 18px 40px; }
+  }
+
 </style>
 </head>
 <body>
@@ -537,7 +573,7 @@
         </div>
         <div class="progress-shell">
           <div class="bulb-strip"></div>
-          <div class="progress-fill" style="width:5%;">
+          <div class="progress-fill" style="width:7.5%;">
             <div class="bulb-strip lit"></div>
           </div>
         </div>
